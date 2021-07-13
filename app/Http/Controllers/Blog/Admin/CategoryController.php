@@ -8,6 +8,7 @@ use App\Models\BlogCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Str;
 
 class CategoryController extends BaseController
 {
@@ -45,7 +46,23 @@ class CategoryController extends BaseController
      */
     public function store(BlogCategoryCreateRequest $request)
     {
-        dd(__METHOD__);
+        $data = $request->input();
+        if(empty($data['slug'])) {
+            $data['slug'] = Str::slug($data['title'], '_');
+        }
+//
+//        $item = new BlogCategory($data);
+//        $item->save();
+
+        $item = (new BlogCategory())->create($data);
+
+        if($item) {
+            return redirect()->route('blog.admin.categories.edit', [$item->id])
+                    ->with(['success' => 'Successfully saved']);
+        } else {
+            return back()->withErrors(['msg' => 'Error saving'])
+                    ->withInput();
+        }
     }
 
     /**
@@ -100,6 +117,10 @@ class CategoryController extends BaseController
         if(empty($item)) {
             return back()->withErrors(['msg' => "Record id={$id} doesn't found !"])
                          ->withInput();
+        }
+
+        if(empty($data['slug'])) {
+            $data['slug'] = Str::slug($data['title'], '_');
         }
 
         $result = $item->fill($data)->save();
