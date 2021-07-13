@@ -18,7 +18,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($categoriesPerPage as $category)
+                                @foreach($paginator as $category)
                                     <tr>
                                         <td>{{ $category->id }}</td>
                                         <td>
@@ -37,12 +37,12 @@
                 </div>
             </div>
         </div>
-        @if($categoriesPerPage->total() > $categoriesPerPage->count())
+        @if($paginator->total() > $paginator->count())
             <div class="row justify-content-center">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            {{ $categoriesPerPage->links() }}
+                            {{ $paginator->links() }}
                         </div>
                     </div>
                 </div>
