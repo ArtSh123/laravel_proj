@@ -17,7 +17,7 @@ class CategoryController extends BaseController
      * @var BlogCategoryRepository
      *
      */
-    protected $blogCategoryRepository;
+    private $blogCategoryRepository;
 
     public function __construct()
     {
@@ -47,7 +47,7 @@ class CategoryController extends BaseController
     public function create()
     {
         $item = new BlogCategory();
-        $categoryList = BlogCategory::all();
+        $categoryList = $this->blogCategoryRepository->getForComboBox();
 
         return view('blog.admin.categories.edit',
             compact('item', 'categoryList'));
@@ -62,6 +62,7 @@ class CategoryController extends BaseController
     public function store(BlogCategoryCreateRequest $request)
     {
         $data = $request->input();
+
         if(empty($data['slug'])) {
             $data['slug'] = Str::slug($data['title'], '_');
         }
@@ -69,6 +70,7 @@ class CategoryController extends BaseController
 //        $item = new BlogCategory($data);
 //        $item->save();
 
+        // Create object and save in DB
         $item = (new BlogCategory())->create($data);
 
         if($item) {
@@ -86,18 +88,18 @@ class CategoryController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id, BlogCategoryRepository $categoryRepository)
+    public function edit($id)
     {
 //        $item = BlogCategory::findOrFail($id);
 //        $categoryList = BlogCategory::all();
 
-        $item = $categoryRepository->getEdit($id);
+        $item = $this->blogCategoryRepository->getEdit($id);
 
         if(empty($item)) {
             abort(404);
         }
 
-        $categoryList = $categoryRepository->getForCombobox();
+        $categoryList = $this->blogCategoryRepository->getForCombobox();
 
         return view('blog.admin.categories.edit',
             compact('item', 'categoryList'));

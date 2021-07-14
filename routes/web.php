@@ -26,9 +26,20 @@ $groupData = [
     'namespace' => 'App\Http\Controllers\Blog\Admin',
     'prefix' => 'admin/blog'
 ];
+
+// admin blog categories
 Route::group($groupData, function() {
     $methods = ['index', 'edit', 'store', 'update', 'create'];
-    Route::resource('categories', CategoryController::class)->only($methods)->names('blog.admin.categories');
+    Route::resource('categories', CategoryController::class)
+        ->only($methods)
+        ->names('blog.admin.categories');
+});
+
+// admin blog posts
+Route::group($groupData, function() {
+    Route::resource('posts', PostController::class)
+        ->except(['show'])
+        ->names('blog.admin.posts');
 });
 
 //Route::resource('rest', RestTestController::class)->names('restTest');
